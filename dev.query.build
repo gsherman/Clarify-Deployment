@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+
+<project name="QueryAnything Development Setup" default="showhelp" basedir="." xmlns="http://nant.sf.net/release/0.85/nant.xsd">
+
+ <property name="nant.settings.currentframework" value="net-3.5" />
+ <property name="nunit2.Formatter" value="Plain" overwrite="false"/>
+
+	<target name="reset-dev-database" description="Reset the development database" depends="dev-properties restore-database" />
+	<target name="setup-dev" description="Setup the development environment" depends="dev-properties apply-schema-scripts setup-database-stored-procs add-licenses import-dat-files import-forms setup-resource-config compile-clearbasic-code clear-clarify-cache" />
+
+	<target name="showhelp"> 
+		<exec program="nant" commandline="-projecthelp"/> 
+	</target> 
+  
+		<property name="schema.dir" value="${path::get-full-path('schema')}" />		
+		<property name="files.dir" value="${path::get-full-path('files')}" />
+		<property name="forms.dir" value="${path::get-full-path('forms')}" />
+		<property name="tools.dir" value="${path::get-full-path('tools')}" />
+		<property name="build.dir" value="${path::get-full-path('build')}" />
+		<property name="clearbasic.dir" value="${path::get-full-path('clearbasic')}" />
+		<property name="database.dir" value="${path::get-full-path('database')}" />				
+		<property name="scripts.dir" value="${path::get-full-path('scripts')}" />			
+    <property name="schema.file" value="" />
+    <property name="import.file" value="" />	
+    <property name="import.files.dir" value="" />	    
+    <property name="cbex.directive.file" value="test.dir" />	            
+		<property name="diet.executable" value="${tools.dir}/Diet/diet.exe" />   
+		<property name="diet.license.key" value="655934BB" /> 
+		<property name="cbex.executable" value="${tools.dir}\CBToolKit\cbex.exe" />   
+		<property	name="powershell.executable" value="c:\windows\SYSTEM32\WindowsPowerShell\v1.0\powershell.exe"/>
+             
+
+	<target name="dev-properties">
+		<property name="database.server" value="." overwrite="false"/>
+		<property name="database.backup.file" value="C:\Program Files\Microsoft SQL Server\MSSQL10.MSSQLSERVER\MSSQL\Backup\cl115.bak" overwrite="false"/>
+		<property name="database.name" value="cl115" overwrite="false"/>
+		<property name="database.username" value="sa" overwrite="false"/>
+		<property name="database.password" value="sa" overwrite="false"/>		
+		<property name="database.connectionstring" value="Data Source=localhost; Initial Catalog=cl115; User Id=sa; Password=sa" overwrite="false"/>
+		<property name="setup.database.connectionstring" value="Provider=SQLOLEDB.1; Initial Catalog=cl115; Data Source=${database.server}; User ID=${database.username}; Password=${database.password}"/>
+		<property name="database.type" value="MsSqlServer2008"/>
+		<property name="database.type.short" value="MSSQL"/>
+		<property name="resource.config.name" value="qa"/>		
+		<property name="clarify.dir" value="C:\clarify\11.5\client\ClarifyClient"/>		
+	</target>
+	
+	<target name="restore-database" depends="dev-properties">
+		<exec program="sqlcmd.exe" commandline="-U${database.username} -P${database.password} -Q &quot;restore database ${database.name} from disk = '${database.backup.file}' with replace&quot;" verbose="true" failonerror="true"/>
+	</target>
+	
+	<target name="apply-schema-scripts" depends="dev-properties" descripton="Apply all of the schemascript files in the schema directory">
+		<foreach item="File" property="filename" in="${schema.dir}"> 
+		  <do> 
+		    <if test="${string::ends-with(filename,'.xml')}"> 
+		      <echo message="applying schema script: ${filename}" /> 
+		      
+		      <property name="schema.file" value="${filename}" />
+		      <call target="apply-schema" />
+		        
+		    </if> 
+		  </do> 
+		</foreach>
+	</target>
+
+	<target name="apply-schema" depends="dev-properties">
+		<property name="schemaEditorConfigurationXmlNamespace" value="http://www.dovetailsoftware.com/2006/10/SchemaEditorConfiguration.xsd"/>
+		<copy file="${tools.dir}/SchemaEditor/Default.SchemaEditor" todir="${build.dir}"/>
+
+		<xmlpoke xpath="/sec:schemaEditor/sec:inputFilePath"
+			file="${build.dir}/Default.SchemaEditor"
+			value="${schema.file}">
+			<namespaces>
+				<namespace prefix="sec" uri="${schemaEditorConfigurationXmlNamespace}" />
+			</namespaces>
+		</xmlpoke>
+
+		<xmlpoke xpath="/sec:schemaEditor/sec:database/sec:connectionString"
+			  file="${build.dir}/Default.SchemaEditor"
+			  value="${database.connectionstring}">
+			<namespaces>
+				<namespace prefix="sec" uri="${schemaEditorConfigurationXmlNamespace}" />
+			</namespaces>
+		</xmlpoke>
+
+		<xmlpoke xpath="/sec:schemaEditor/sec:database/sec:type"
+  			file="${build.dir}/Default.SchemaEditor"
+  			value="${database.type}">
+			<namespaces>
+				<namespace prefix="sec" uri="${schemaEditorConfigurationXmlNamespace}" />
+			</namespaces>
+		</xmlpoke>
+
+		<echo message="Updating database with schema from file: ${schema.file}"/>
+		<exec program="${tools.dir}/SchemaEditor/SchemaEditor.exe" workingdir="${build.dir}" commandline="-a"/>
+
+	</target>
+
+
+	<target name="add-licenses" depends="dev-properties" description="Add Dovetail SDK licenses to the database">
+		<sql connstring="${setup.database.connectionstring}" transaction="false" delimiter=";" delimstyle="Normal" print="false" failonerror="true">
+			use ${database.name};
+			DELETE FROM table_fc_licensing;
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(0, 'T2apMsz0zOX6QFmaOvu1KJOQ1TTmmxF7km5WHm1h+dQ=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(1, 'QhEL6iClnnlZ3/FuXLUK9VWKPQNpSVDern2xTA6eh/4=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(2, 'BYNDwESkFhqQXkKuVhekUbJUQQdKkths/oeMT7RyNEo=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(3, 'KX2dX0+TNLiHhu0oP7GlMXp2+vTsJzmgmx5QWe6EgQ4=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(4, '3oMD++Hwr5Ubc86EwxLoFwebKg8ghMrycyOEkwFFp+g=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(5, 'tSdf1qR2pSEDHXIFpXX00IS7JULVnhueSnwk9ZP/Rgg=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(6, 'ftxrZ03Lvnbql65tXKucJsI2dj4Z0hSqO90cSQnQ9dg=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(7, '/tlCwZIOOO72Pgs2/2pUAiYGqqDd+TZSzZzLCPlk41M=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(8, 'L5LhIsrdB3JjIFbrskcSyK/9GZmAndPOOy3oE4sNLYk=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(9, 'i3yjSwDcq9PgM7uMzRY4SW5oWzz+i8TE4tlOTWrAEvU=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(10, '/SfTgzM3WJb2BRHZziS/1weFJi2LRNUnhFthFCFSufs=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(11, 'nrDObsBo0cmuXva9EcDgBsZca2JbxQCwkdODgUXFcvw=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(12, 'FY6d1sCaVuzVPsWmaXfywYrinuU+NkP7jj/xH5UgJ5A=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(13, '62cpuX2+j1v3pYvIPwLs//6/i7SG5uTJZEJU/6hMLp4=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(14, 'F5WLo7gUPoyqB82jmoAjzmWcGiYfg2rQV+p7AfWZ3LU=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(15, 'y5sbuG+gAdvH0xCuNa9WgtXw2wIjbURhQT4ddMlZ1YI=');
+		</sql>
+	</target>
+	
+
+	<target name="import-dat-files" depends="dev-properties" description="Import all of the DAT files in the files directory">
+  	<property name="import.filesdir" value="${files.dir}" />	
+		<call target="import-files-from-dir" />
+	</target>
+
+	<target name="import-forms" depends="dev-properties" description="Import all of the form (DAT) files in the forms directory">
+  	<property name="import.filesdir" value="${forms.dir}" />	
+		<call target="import-files-from-dir" />
+	</target>
+
+
+	<target name="import-files-from-dir" depends="">
+		<foreach item="File" property="filename" in="${import.filesdir}"> 
+		  <do> 
+		    <if test="${string::ends-with(filename,'.dat')}"> 
+		      <echo message="importing DAT file ${filename}" /> 
+		      
+		      <property name="import.file" value="${filename}" />
+		      <call target="import-file" />
+		        
+		    </if> 
+		  </do> 
+		</foreach>
+	</target>
+					          
+	
+	<target name="import-file" depends="">
+		<exec program="${diet.executable}" workingdir="${files.dir}" failonerror="false" commandline="-user_name ${database.username} -password ${database.password} -db_server ${database.server} -db_name ${database.name} -no_recovery -license ${diet.license.key} -import ${import.file}" />
+	</target>
+
+	<target name="create-clarify-env-file" depends="dev-properties">
+	  <property name="clarify.env.file" value="${clearbasic.dir}\clarify.env" />	
+		<delete file="${clarify.env.file}" />
+		<touch file="${clarify.env.file}" />
+		<echo file="${clarify.env.file}" append="true">db_name=${database.name}</echo>
+		<echo file="${clarify.env.file}" append="true">db_server=${database.server}</echo>
+		<echo file="${clarify.env.file}" append="true">login_name=${database.username}</echo>
+		<echo file="${clarify.env.file}" append="true">db_password=${database.password}</echo>
+		<echo file="${clarify.env.file}" append="true">auto_login=true</echo>
+	</target>
+				
+	<target name="compile-clearbasic-code" depends="dev-properties create-clarify-env-file" description="Compile the ClearBasic code using the cbex.directive.file">
+		<exec program="${cbex.executable}" workingdir="${clearbasic.dir}" failonerror="false" commandline="-batch -overwrite -dir ${cbex.directive.file}" />
+
+		<echo message="cbex.log output:" />			
+		<foreach item="Line" in="${clearbasic.dir}\cbex.log"  property="x">
+		    <echo message="${x}" />
+		</foreach>					
+	</target>
+	
+
+	<target name="setup-database-stored-procs" depends="dev-properties" description="Install the stored procs needed by the Dovetail SDK">
+			<exec program="sqlcmd.exe" workingdir="${scripts.dir}">
+			<arg line="-U${database.username} -P${database.password} -S ${database.server}  -d ${database.name} -i  ${scripts.dir}/mssql_sprocs.sql"/>
+			</exec>
+	</target>
+		
+	<target name="setup-resource-config" depends="dev-properties" description="Create an RC, add the current user to it, and add the forms to it">
+		<copy todir="${build.dir}" overwrite="true">
+			<fileset basedir="${scripts.dir}">
+				<include name="*" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.dir}" overwrite="true">
+			<fileset basedir="${clearbasic.dir}">
+				<include name="${cbex.directive.file}" />
+			</fileset>
+		</copy>
+
+		<xmlpoke
+    file="${build.dir}/dovetail.config"
+    xpath="/configuration/appSettings/add[@key = 'connectionString']/@value"
+    value="${database.connectionstring}" />
+
+		<exec program="${powershell.executable}" workingdir="${build.dir}">
+			<arg value="./SetupResourceConfig.ps1" />
+			<arg value="${resource.config.name}" />
+			<arg value="${cbex.directive.file}" />
+		</exec>
+					
+	</target>
+
+	<target name="clear-clarify-cache" description="Delete the clarify cache files">
+		<delete file="${clarify.dir}\cl115.cfy" />
+		<delete file="${clarify.dir}\cl115.058" />
+	</target>
+				
+</project>
