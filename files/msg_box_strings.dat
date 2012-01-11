@@ -1,0 +1,104 @@
+/******************************************************************************/
+/* Import File for Product Configuration                                      */
+/*                                                                            */
+/* Copyright (C) 2000 First Choice Software, Inc.        All Rights Reserved  */
+/******************************************************************************/
+OBJECT TYPE = "fc_string", NAME="10120_EN_US"
+  UNIQUE_FIELD = id, locale, application
+  FIELDS
+   id=10120;
+   locale="EN_US";
+   application="";
+   string="OK";
+  END_FIELDS
+END_OBJECT NAME="10120_EN_US"
+
+OBJECT TYPE = "fc_string", NAME="10121_EN_US"
+  UNIQUE_FIELD = id, locale, application
+  FIELDS
+   id=10121;
+   locale="EN_US";
+   application="";
+   string="Cancel";
+  END_FIELDS
+END_OBJECT NAME="10121_EN_US"
+
+OBJECT TYPE = "fc_string", NAME="10122_EN_US"
+  UNIQUE_FIELD = id, locale, application
+  FIELDS
+   id=10122;
+   locale="EN_US";
+   application="";
+   string="Yes";
+  END_FIELDS
+END_OBJECT NAME="10122_EN_US"
+
+OBJECT TYPE = "fc_string", NAME="10123_EN_US"
+  UNIQUE_FIELD = id, locale, application
+  FIELDS
+   id=10123;
+   locale="EN_US";
+   application="";
+   string="No";
+  END_FIELDS
+END_OBJECT NAME="10123_EN_US"
+
+OBJECT TYPE = "fc_string", NAME="10124_EN_US"
+  UNIQUE_FIELD = id, locale, application
+  FIELDS
+   id=10124;
+   locale="EN_US";
+   application="";
+   string="Save";
+  END_FIELDS
+END_OBJECT NAME="10124_EN_US"
+
+OBJECT TYPE = "fc_string", NAME="10125_EN_US"
+  UNIQUE_FIELD = id, locale, application
+  FIELDS
+   id=10125;
+   locale="EN_US";
+   application="";
+   string="Discard";
+  END_FIELDS
+END_OBJECT NAME="10125_EN_US"
+
+OBJECT TYPE = "fc_string", NAME="10126_EN_US"
+  UNIQUE_FIELD = id, locale, application
+  FIELDS
+   id=10126;
+   locale="EN_US";
+   application="";
+   string="Abort";
+  END_FIELDS
+END_OBJECT NAME="10126_EN_US"
+
+OBJECT TYPE = "fc_string", NAME="10127_EN_US"
+  UNIQUE_FIELD = id, locale, application
+  FIELDS
+   id=10127;
+   locale="EN_US";
+   application="";
+   string="Retry";
+  END_FIELDS
+END_OBJECT NAME="10127_EN_US"
+
+OBJECT TYPE = "fc_string", NAME="10128_EN_US"
+  UNIQUE_FIELD = id, locale, application
+  FIELDS
+   id=10128;
+   locale="EN_US";
+   application="";
+   string="Ignore";
+  END_FIELDS
+END_OBJECT NAME="10128_EN_US"
+
+OBJECT TYPE = "fc_string", NAME="10129_EN_US"
+  UNIQUE_FIELD = id, locale, application
+  FIELDS
+   id=10129;
+   locale="EN_US";
+   application="";
+   string="Lookup";
+  END_FIELDS
+END_OBJECT NAME="10129_EN_US"

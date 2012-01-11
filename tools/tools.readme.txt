@@ -1,0 +1,6 @@
+Normally, I have the following directories and tools here:
+
+\Clarify-Deployment\tools\CBToolkit\*    Clarify CBEX Toolkit (for correct version of Clarify and corrrect database platform)
+\Clarify-Deployment\tools\diet\diet.exe  Dovetail ArchiveManager (diet) executable
+\Clarify-Deployment\tools\SchemaEditor\* Dovetail SchemaEditor
+\Clarify-Deployment\tools\NAnt  A free .NET Build Tool (http://nant.sourceforge.net/)

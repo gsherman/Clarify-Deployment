@@ -1,0 +1,33 @@
+Option Explicit
+
+Declare Function msg_box(the_text As String, the_caption As String, the_type As Integer) As Integer
+
+Global locale As String
+
+Sub set_locale()
+  If Trim$(locale) <> "" Then Exit Sub
+  locale = Trim$(Environ("LC_STRING"))
+  If locale = "" Then
+     locale = Trim$(Environ("LC_ALL"))
+  End If
+  If locale = "" Then
+     locale = "EN_US"
+  End If
+End Sub
+
+Sub initialize_app() 
+  Dim cs_menu As New AppMenu
+
+  set_locale
+
+  cs_menu.MenuBarID = 1002
+  cs_menu.AddItem "Desktop", "Test", "test"
+  
+  App.ShowDefaultMenu  
+End Sub
+
+Sub test_Click()
+  Dim result as Integer
+  result = msg_box("This is a test", "test", 0) 
+End Sub
+

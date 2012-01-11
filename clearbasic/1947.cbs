@@ -1,0 +1,241 @@
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Product        :  Internationalization Toolkit(tm)
+'
+' Series         :  First Choice Development Series(tm)
+'
+' Name           :  Internationalized Message Box Form (1947)
+'
+' Description    :  Displays a message box using internationalized strings and labels
+'
+' Author         :  First Choice Software, Inc.
+'                   4412 Spicewood Springs Road
+'                   Suite 701
+'                   Austin, TX  78759
+'                   (512) 418-2905
+'                   EMAIL: support@fchoice.com
+'                   www.fchoice.com
+'
+' Platforms      :  This version supports Clarify 4.5 and later
+'
+' Copyright (C) 2000 First Choice Software, Inc.
+' All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Functional Declarations
+'
+' Copyright (C) 2000. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'   Internationalized Message Box Dialog
+'
+'   Formats:	   0       - OK
+'       		   1       - OK/Cancel
+'                  2       - Abort/Retry/Ignore
+'                  3       - Yes/No/Cancel
+'                  4       - Yes/No
+'                  5       - Retry/Cancel
+'                  6       - Save/Discard/Cancel
+'                  7       - Yes/No/Lookup
+'
+'   Return Codes:  0       - OK
+'                  1       - Cancel
+'                  2       - Yes
+'                  3       - No
+'                  4       - Abort
+'                  5       - Retry
+'                  6       - Ignore
+'                  7       - Save
+'                  8       - Discard
+'                  9       - Lookup
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+OPTION EXPLICIT
+
+Declare Public Function get_sprintf(str_num As Long, locale As String, application As String, _
+                     Optional arg1 As Variant, Optional arg2 As Variant, _
+                     Optional arg3 As Variant, Optional arg4 As Variant, _
+                     Optional arg5 As Variant, Optional arg6 As Variant) _
+                     As String
+
+Declare Public Sub get_strings(start_val As Long, num_strings As Integer, locale As String, _
+               application As String, ret_strings As List)
+
+Global locale As String
+Global the_response As Integer
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Function Description:
+'
+' Copyright (C) 2000. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Sub Form_Load()
+  Me.DoDefault
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Function Description:
+'
+' Copyright (C) 2000. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Sub BTN_1_Click()
+  Dim ret_int As Integer
+
+  Select Case Cobj_LNG_BOX_TYPE.Contents
+    Case 2
+      ret_int = 4
+    Case 3
+      ret_int = 2
+    Case 6
+      ret_int = 7
+    Case 7
+      ret_int = 2
+    Case Else
+      ret_int = -1
+  End Select
+  the_response = ret_int
+  Me.Close
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Function Description:
+'
+' Copyright (C) 2000. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Sub BTN_2_Click()
+  Dim ret_int As Integer
+
+  Select Case Cobj_LNG_BOX_TYPE.Contents
+    Case 1
+      ret_int = 0
+    Case 2
+      ret_int = 5
+    Case 3
+      ret_int = 3
+    Case 4
+      ret_int = 2
+    Case 5
+      ret_int = 5
+    Case 6
+      ret_int = 8
+    Case 7
+      ret_int = 3
+    Case Else
+      ret_int = -1
+  End Select
+  the_response = ret_int
+  Me.Close
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Function Description:
+'
+' Copyright (C) 2000. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Sub CLOSE_Click()
+  Dim ret_int As Integer
+
+  Select Case Cobj_LNG_BOX_TYPE.Contents
+    Case 0
+      ret_int = 0
+    Case 1
+      ret_int = 1
+    Case 2
+      ret_int = 6
+    Case 3
+      ret_int = 1
+    Case 4
+      ret_int = 3
+    Case 5
+      ret_int = 1
+    Case 6
+      ret_int = 1
+    Case 7
+      ret_int = 9
+    Case Else
+      ret_int = -1
+  End Select
+  the_response = ret_int
+  Me.Close
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Function Description:
+'
+' Copyright (C) 2000. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Sub Message(ByVal num As Long, ByVal info As String)
+  Dim box_type    As Long
+  Dim ret_strings As New List
+
+  Select Case num
+    Case cbCloseMessage
+      Me.Close
+    Case cbFirstMessage + 50
+      get_strings 10120, 10, locale, "", ret_strings
+      box_type = CLng(info)
+      Cobj_LNG_BOX_TYPE.Fill box_type
+      Select Case box_type
+        Case 0                          ' OK Dialog
+          BTN_1.Visible = False
+          BTN_2.Visible = False
+          Ctl_CLOSE.Visible = True
+          Ctl_CLOSE.Caption = ret_strings.ItemByIndex(0)
+        Case 1                          ' OK/Cancel Dialog
+          BTN_1.Visible = False
+          BTN_2.Visible = True
+          Ctl_CLOSE.Visible = True
+          BTN_2.Caption = ret_strings.ItemByIndex(0)
+          Ctl_CLOSE.Caption = ret_strings.ItemByIndex(1)
+        Case 2                          ' Abort/Retry/Ignore
+          BTN_1.Visible = True
+          BTN_2.Visible = True
+          Ctl_CLOSE.Visible = True
+          BTN_1.Caption = ret_strings.ItemByIndex(6)
+          BTN_2.Caption = ret_strings.ItemByIndex(7)
+          Ctl_CLOSE.Caption = ret_strings.ItemByIndex(8)
+        Case 3                          ' Yes/No/Cancel
+          BTN_1.Visible = True
+          BTN_2.Visible = True
+          Ctl_CLOSE.Visible = True
+          BTN_1.Caption = ret_strings.ItemByIndex(2)
+          BTN_2.Caption = ret_strings.ItemByIndex(3)
+          Ctl_CLOSE.Caption = ret_strings.ItemByIndex(1)
+        Case 4                          ' Yes/No
+          BTN_1.Visible = False
+          BTN_2.Visible = True
+          Ctl_CLOSE.Visible = True
+          BTN_2.Caption = ret_strings.ItemByIndex(2)
+          Ctl_CLOSE.Caption = ret_strings.ItemByIndex(3)
+        Case 5                          ' Retry/Cancel
+          BTN_1.Visible = False
+          BTN_2.Visible = True
+          Ctl_CLOSE.Visible = True
+          BTN_2.Caption = ret_strings.ItemByIndex(7)
+          Ctl_CLOSE.Caption = ret_strings.ItemByIndex(1)
+        Case 6                          ' Save/Discard/Cancel
+          BTN_1.Visible = True
+          BTN_2.Visible = True
+          Ctl_CLOSE.Visible = True
+          BTN_1.Caption = ret_strings.ItemByIndex(4)
+          BTN_2.Caption = ret_strings.ItemByIndex(5)
+          Ctl_CLOSE.Caption = ret_strings.ItemByIndex(1)
+        Case 7                          ' Yes/No/Cancel
+          BTN_1.Visible = True
+          BTN_2.Visible = True
+          Ctl_CLOSE.Visible = True
+          BTN_1.Caption = ret_strings.ItemByIndex(2)
+          BTN_2.Caption = ret_strings.ItemByIndex(3)
+          Ctl_CLOSE.Caption = ret_strings.ItemByIndex(9)
+        Case Else
+          App.MsgBox get_sprintf(10235, locale, "", box_type)
+          Me.Close
+      End Select
+    Case cbFirstMessage + 51
+      MLE_TEXT.Text = info
+    Case cbFirstMessage + 52
+      Me.Caption = info
+    Case Else
+      Me.DoDefault
+  End Select
+End Sub

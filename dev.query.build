@@ -25,7 +25,7 @@
     <property name="import.files.dir" value="" />	    
     <property name="cbex.directive.file" value="test.dir" />	            
 		<property name="diet.executable" value="${tools.dir}/Diet/diet.exe" />   
-		<property name="diet.license.key" value="655934BB" /> 
+		<property name="diet.license.key" value="Your Diet License Key Here" /> 
 		<property name="cbex.executable" value="${tools.dir}\CBToolKit\cbex.exe" />   
 		<property	name="powershell.executable" value="c:\windows\SYSTEM32\WindowsPowerShell\v1.0\powershell.exe"/>
              
@@ -35,12 +35,12 @@
 		<property name="database.backup.file" value="C:\Program Files\Microsoft SQL Server\MSSQL10.MSSQLSERVER\MSSQL\Backup\cl115.bak" overwrite="false"/>
 		<property name="database.name" value="cl115" overwrite="false"/>
 		<property name="database.username" value="sa" overwrite="false"/>
-		<property name="database.password" value="sa" overwrite="false"/>		
-		<property name="database.connectionstring" value="Data Source=localhost; Initial Catalog=cl115; User Id=sa; Password=sa" overwrite="false"/>
+		<property name="database.password" value="password" overwrite="false"/>		
+		<property name="database.connectionstring" value="Data Source=localhost; Initial Catalog=cl115; User Id=sa; Password=password" overwrite="false"/>
 		<property name="setup.database.connectionstring" value="Provider=SQLOLEDB.1; Initial Catalog=cl115; Data Source=${database.server}; User ID=${database.username}; Password=${database.password}"/>
 		<property name="database.type" value="MsSqlServer2008"/>
 		<property name="database.type.short" value="MSSQL"/>
-		<property name="resource.config.name" value="qa"/>		
+		<property name="resource.config.name" value="custom"/>		
 		<property name="clarify.dir" value="C:\clarify\11.5\client\ClarifyClient"/>		
 	</target>
 	
@@ -100,22 +100,8 @@
 		<sql connstring="${setup.database.connectionstring}" transaction="false" delimiter=";" delimstyle="Normal" print="false" failonerror="true">
 			use ${database.name};
 			DELETE FROM table_fc_licensing;
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(0, 'T2apMsz0zOX6QFmaOvu1KJOQ1TTmmxF7km5WHm1h+dQ=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(1, 'QhEL6iClnnlZ3/FuXLUK9VWKPQNpSVDern2xTA6eh/4=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(2, 'BYNDwESkFhqQXkKuVhekUbJUQQdKkths/oeMT7RyNEo=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(3, 'KX2dX0+TNLiHhu0oP7GlMXp2+vTsJzmgmx5QWe6EgQ4=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(4, '3oMD++Hwr5Ubc86EwxLoFwebKg8ghMrycyOEkwFFp+g=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(5, 'tSdf1qR2pSEDHXIFpXX00IS7JULVnhueSnwk9ZP/Rgg=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(6, 'ftxrZ03Lvnbql65tXKucJsI2dj4Z0hSqO90cSQnQ9dg=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(7, '/tlCwZIOOO72Pgs2/2pUAiYGqqDd+TZSzZzLCPlk41M=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(8, 'L5LhIsrdB3JjIFbrskcSyK/9GZmAndPOOy3oE4sNLYk=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(9, 'i3yjSwDcq9PgM7uMzRY4SW5oWzz+i8TE4tlOTWrAEvU=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(10, '/SfTgzM3WJb2BRHZziS/1weFJi2LRNUnhFthFCFSufs=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(11, 'nrDObsBo0cmuXva9EcDgBsZca2JbxQCwkdODgUXFcvw=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(12, 'FY6d1sCaVuzVPsWmaXfywYrinuU+NkP7jj/xH5UgJ5A=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(13, '62cpuX2+j1v3pYvIPwLs//6/i7SG5uTJZEJU/6hMLp4=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(14, 'F5WLo7gUPoyqB82jmoAjzmWcGiYfg2rQV+p7AfWZ3LU=');
-			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(15, 'y5sbuG+gAdvH0xCuNa9WgtXw2wIjbURhQT4ddMlZ1YI=');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(0, 'AddYour1stLicenseKeyHere');
+			INSERT INTO table_fc_licensing (objid, licensekey) VALUES(0, 'AddYour2ndLicenseKeyHere and so on');
 		</sql>
 	</target>
 	

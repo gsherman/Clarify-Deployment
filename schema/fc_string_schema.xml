@@ -1,0 +1,314 @@
+<schemaScript xmlns="http://www.dovetailsoftware.com/2006/10/SchemaScript.xsd">
+
+    <addTable name="fc_string" id="3500">
+        <description>Locale-based strings for First Choice Software Customizations</description>
+        <groupName>System</groupName>
+    </addTable>
+
+    <addColumn name="objid" dataType="Integer" table="fc_string" >
+        <description>Internal record number</description>
+        <clarifyGenericFieldID>3</clarifyGenericFieldID>
+    </addColumn>
+    <addColumn name="id" dataType="Integer" table="fc_string" >
+        <description>String ID</description>
+    </addColumn>
+    <addColumn name="string" dataType="String" table="fc_string" >
+        <length>255</length>
+        <description>Text  of the string</description>
+    </addColumn>
+    <addColumn name="locale" dataType="String" table="fc_string" >
+        <length>20</length>
+        <description>Indicates the locale of the string; e.g., EN_US=US English, JA_JP=Japanese in Japan</description>
+    </addColumn>
+    <addColumn name="application" dataType="String" table="fc_string" >
+        <length>80</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="dev" dataType="Integer" table="fc_string" >
+        <description>Row version number for mobile distribution purposes</description>
+        <clarifyGenericFieldID>151</clarifyGenericFieldID>
+    </addColumn>
+    <addColumn name="nstring" dataType="String" table="fc_string" >
+        <length>255</length>
+        <description>Text of the string</description>
+    </addColumn>
+    <addColumn name="name" dataType="String" table="fc_string" >
+        <length>255</length>
+        <description>Name or key of this string</description>
+    </addColumn>
+
+
+
+
+    <addTable name="fc_list_hdr" id="3501">
+        <description>Header record for First Choice Software list object</description>
+        <groupName>FC I18N</groupName>
+    </addTable>
+
+    <addColumn name="objid" dataType="Integer" table="fc_list_hdr" >
+        <description>Internal record number</description>
+        <clarifyGenericFieldID>3</clarifyGenericFieldID>
+    </addColumn>
+    <addColumn name="title" dataType="String" table="fc_list_hdr" >
+        <length>80</length>
+        <description>Name of the list</description>
+    </addColumn>
+    <addColumn name="description" dataType="String" table="fc_list_hdr" >
+        <length>255</length>
+        <description>Description of the list</description>
+    </addColumn>
+    <addColumn name="application" dataType="String" table="fc_list_hdr" >
+        <length>80</length>
+        <description>What is the list for?</description>
+    </addColumn>
+
+    <addTable name="fc_list_level" id="3502">
+        <description>One level of a First Choice Software list</description>
+        <groupName>FC I18N</groupName>
+    </addTable>
+
+    <addColumn name="objid" dataType="Integer" table="fc_list_level" >
+        <description>Internal record number</description>
+        <clarifyGenericFieldID>3</clarifyGenericFieldID>
+    </addColumn>
+
+    <addRelation name="hdr2fc_list_level" type="OneToOne" table="fc_list_hdr" inverseRelationName="level2fc_list_hdr" inverseTable="fc_list_level" >
+        <description>Top-level of list</description>
+        <inverseDescription>Relates top level to header</inverseDescription>
+    </addRelation>
+    
+
+    <addTable name="fc_list_elm" id="3503">
+        <description>One element in a First Choice Software list</description>
+        <groupName>FC I18N</groupName>
+    </addTable>
+
+    <addColumn name="objid" dataType="Integer" table="fc_list_elm" >
+        <description>Internal record number</description>
+        <clarifyGenericFieldID>3</clarifyGenericFieldID>
+    </addColumn>
+    <addColumn name="rank" dataType="Integer" table="fc_list_elm" >
+        <description>The position of this element in the level</description>
+    </addColumn>
+    <addColumn name="state" dataType="Integer" table="fc_list_elm" >
+        <description>The state of the element. 0 = Default. 1 = Active. 2 = Inactive</description>
+    </addColumn>
+    <addColumn name="fc_use" dataType="String" table="fc_list_elm" >
+        <length>20</length>
+        <description>Only used by the i18n list gui. Do not depend on this field having a value.</description>
+    </addColumn>
+    <addColumn name="fc_use2" dataType="String" table="fc_list_elm" >
+        <length>20</length>
+        <description>Only used by the i18n list gui. Do not depend on this field having a value.</description>
+    </addColumn>
+
+    <addRelation name="level2fc_list_elm" type="OneToMany" table="fc_list_level" inverseRelationName="elm2fc_list_level" inverseTable="fc_list_elm" >
+        <description>Elements for this list level</description>
+        <inverseDescription>Level for this element</inverseDescription>
+    </addRelation>
+    
+
+    <addTable name="fc_list_locelm" id="3504">
+        <description>One locale string for an element in a First Choice Software list</description>
+        <groupName>FC I18N</groupName>
+    </addTable>
+
+    <addColumn name="objid" dataType="Integer" table="fc_list_locelm" >
+        <description>Internal record number</description>
+        <clarifyGenericFieldID>3</clarifyGenericFieldID>
+    </addColumn>
+    <addColumn name="title" dataType="String" table="fc_list_locelm" >
+        <length>20</length>
+        <description>String for the locale element</description>
+    </addColumn>
+    <addColumn name="locale" dataType="String" table="fc_list_locelm" >
+        <length>20</length>
+        <description>Locale for the locale element</description>
+    </addColumn>
+    <addColumn name="other" dataType="String" table="fc_list_locelm" >
+        <length>80</length>
+        <description>Other string for the locale element</description>
+    </addColumn>
+
+
+    <addRelation name="parent2fc_list_level" type="OneToOne" table="fc_list_elm" inverseRelationName="child2fc_list_elm" inverseTable="fc_list_level" >
+        <description>The sub-level for this element</description>
+        <inverseDescription>The element that this level was called from</inverseDescription>
+    </addRelation>
+    <addRelation name="locs2fc_list_locelm" type="OneToMany" table="fc_list_elm" inverseRelationName="locelm2fc_list_elm" inverseTable="fc_list_locelm" >
+        <description>The locale strings for this element</description>
+        <inverseDescription>Element for this locale string</inverseDescription>
+    </addRelation>
+
+
+
+    <addTable name="fc_locale" id="3505">
+        <description> </description>
+        <groupName>System</groupName>
+    </addTable>
+
+    <addColumn name="objid" dataType="Integer" table="fc_locale" >
+        <description>Internal record number</description>
+        <clarifyGenericFieldID>3</clarifyGenericFieldID>
+    </addColumn>
+    <addColumn name="locale_name" dataType="String" table="fc_locale" >
+        <length>20</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="abday" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="day" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="abmon" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="mon" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="d_t_fmt" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="d_fmt" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="t_fmt" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="am_pm" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="t_fmt_ampm" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="upper" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="lower" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="space" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="cntrl" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="punct" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="digit" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="xdigit" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="blank" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="toupper" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="tolower" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="yesexpr" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="noexpr" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="int_curr_symbol" dataType="String" table="fc_locale" >
+        <length>20</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="currency_symbol" dataType="String" table="fc_locale" >
+        <length>10</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="mon_decimal_point" dataType="String" table="fc_locale" >
+        <length>10</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="mon_thousands_sep" dataType="String" table="fc_locale" >
+        <length>10</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="mon_grouping" dataType="Integer" table="fc_locale" >
+        <description> </description>
+    </addColumn>
+    <addColumn name="positive_sign" dataType="String" table="fc_locale" >
+        <length>10</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="negative_sign" dataType="String" table="fc_locale" >
+        <length>10</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="int_frac_digits" dataType="Integer" table="fc_locale" >
+        <description> </description>
+    </addColumn>
+    <addColumn name="frac_digits" dataType="Integer" table="fc_locale" >
+        <description> </description>
+    </addColumn>
+    <addColumn name="p_cs_precedes" dataType="Integer" table="fc_locale" >
+        <description> </description>
+    </addColumn>
+    <addColumn name="p_sep_by_space" dataType="Integer" table="fc_locale" >
+        <description> </description>
+    </addColumn>
+    <addColumn name="n_cs_precedes" dataType="Integer" table="fc_locale" >
+        <description> </description>
+    </addColumn>
+    <addColumn name="n_sep_by_space" dataType="Integer" table="fc_locale" >
+        <description> </description>
+    </addColumn>
+    <addColumn name="p_sign_posn" dataType="Integer" table="fc_locale" >
+        <description> </description>
+    </addColumn>
+    <addColumn name="n_sign_posn" dataType="Integer" table="fc_locale" >
+        <description> </description>
+    </addColumn>
+    <addColumn name="decimal_point" dataType="String" table="fc_locale" >
+        <length>20</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="thousands_sep" dataType="String" table="fc_locale" >
+        <length>20</length>
+        <description> </description>
+    </addColumn>
+    <addColumn name="grouping" dataType="Integer" table="fc_locale" >
+        <description> </description>
+    </addColumn>
+    <addColumn name="dev" dataType="Integer" table="fc_locale" >
+        <description>Row version number for mobile distribution purposes</description>
+        <clarifyGenericFieldID>151</clarifyGenericFieldID>
+    </addColumn>
+    <addColumn name="locale_title" dataType="String" table="fc_locale" >
+        <length>255</length>
+        <description> </description>
+    </addColumn>
+
+
+</schemaScript>

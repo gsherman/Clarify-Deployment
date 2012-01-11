@@ -1,0 +1,186 @@
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Product        :  First Choice Applications
+'
+' Series         :  First Choice Interface Series(tm)
+'
+' Name           :  String handling routines
+'
+' Description    :  This module contains routines that allow for 
+'                   internationalized strings
+'
+' Author         :  First Choice Software, Inc.
+'                   4412 Spicewood Springs Road
+'                   Suite 701
+'                   Austin, TX  78759
+'                   (512) 418-2905
+'                   EMAIL: support@fchoice.com
+'                   www.fchoice.com
+'
+' Platforms      :  This version supports Clarify 4.5 and later
+'
+' Copyright (C)  1998 First Choice Software, Inc.
+' All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Functional Declarations
+'
+' Copyright (C) 1998. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+OPTION EXPLICIT
+
+Global the_response As Integer
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Get a range of strings from the I18N tables
+'
+' Copyright (C) 1998. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Public Sub get_strings(start_val As Long, num_strings As Integer, locale As String, _
+               application As String, ret_strings As List)
+  Dim t_ret  As New BulkRetrieve
+  Dim t_list As List
+  Dim t_rec  As Record
+  Dim t_int  As Integer
+  Dim t_cnt  As Integer
+
+  If Trim$(locale) = "" Then
+     locale = "EN_US"
+  End If
+
+  t_ret.SimpleQuery 0, "fc_string"
+  t_ret.AppendFilter 0, "locale", cbEqual, locale
+  t_ret.AppendFilter 0, "id", cbGreater, start_val - 1
+  t_ret.AppendFilter 0, "id", cbLess, start_val + num_strings
+  If Trim$(application) <> "" Then t_ret.AppendFilter 0, "application", cbLike, application + "%"
+  t_ret.AppendSort 0, "id", cbAscending
+  t_ret.RetrieveRecords
+  Set t_list = t_ret.GetRecordList(0)
+  ret_strings.ItemType = "String"
+  ret_strings.Clear
+  t_cnt = 0
+  For t_int = 0 To num_strings - 1
+    If t_cnt < t_list.Count Then
+       Set t_rec = t_list.ItemByIndex(t_cnt)
+       If t_rec.GetField("id") - start_val = t_int Then
+          ret_strings.AppendItem t_rec.GetField("string")
+          t_cnt = t_cnt + 1
+       Else
+          ret_strings.AppendItem ""
+       End If
+    Else
+       ret_strings.AppendItem ""
+    End If
+  Next t_int
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' String Formatting Routine 
+'
+' Copyright (C) 1998. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Public Function sprintf(in_str As String, Optional arg1 As Variant, _
+                 Optional arg2 As Variant, Optional arg3 As Variant, _
+                 Optional arg4 As Variant, Optional arg5 As Variant, _
+                 Optional arg6 As Variant) As String
+  Dim t_str  As String
+  Dim par    As String
+  Dim t_int  As Integer
+  Dim t_loc  As Integer
+  Dim t_char As String
+  Dim t_var  As Variant
+
+  t_str = in_str
+  For t_int = 1 To 6
+    par = "%" + Trim$(Str$(t_int))
+    t_loc = Instr(t_str, par)
+    If t_loc > 0 Then
+     Select Case t_int
+      Case 1
+       t_var = arg1
+      Case 2
+       t_var = arg2
+      Case 3
+       t_var = arg3
+      Case 4
+       t_var = arg4
+      Case 5
+       t_var = arg5
+      Case 6
+       t_var = arg6
+     End Select
+
+     t_char = UCase(Mid$(t_str, t_loc + 2, 1))
+     Select Case t_char
+       Case "L"
+        If UCase(Mid$(t_str, t_loc + 3, 1)) = "D" Then
+           t_str = Left$(t_str, t_loc - 1) + CStr(t_var) + _
+                   Mid$(t_str, t_loc + 4, Len(t_str) - 5)
+        End If
+       Case "D"
+        t_str = Left$(t_str, t_loc - 1) + CStr(t_var) + _
+                Mid$(t_str, t_loc + 3, Len(t_str) - 4)
+       Case Else
+        t_str = Left$(t_str, t_loc - 1) + CStr(t_var) + _
+                Mid$(t_str, t_loc + 3, Len(t_str) - 4)
+
+     End Select
+    End If
+  Next t_int
+  sprintf = t_str
+End Function
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Get a string and format it 
+'
+' Copyright (C) 1998. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Public Function get_sprintf(str_num As Long, locale As String, application As String, _
+                     Optional arg1 As Variant, Optional arg2 As Variant, _
+                     Optional arg3 As Variant, Optional arg4 As Variant, _
+                     Optional arg5 As Variant, Optional arg6 As Variant) _
+                     As String
+  Dim t_ret  As New BulkRetrieve
+  Dim t_list As List
+  Dim t_rec  As Record
+
+  t_ret.SimpleQuery 0, "fc_string"
+  t_ret.AppendFilter 0, "locale", cbEqual, locale
+  t_ret.AppendFilter 0, "id", cbEqual, str_num
+  If Trim$(application) <> "" Then t_ret.AppendFilter 0, "application", cbLike, application + "%"
+  t_ret.RetrieveRecords
+  Set t_list = t_ret.GetRecordList(0)
+  If t_list.Count = 0 Then
+    get_sprintf = ""
+    Exit Function
+  End If
+  Set t_rec = t_list.ItemByIndex(0)
+  get_sprintf = sprintf(t_rec.GetField("string"), arg1, arg2, arg3, arg4, arg5, arg6)
+End Function
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Display an I18N message box 
+'
+' Copyright (C) 1998. First Choice Software. All Rights Reserved.
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function msg_box(the_text As String, the_caption As String, the_type As Integer) As Integer
+  Dim new_form As New Form
+
+  the_response = -1
+  new_form.Show 1947, cbFrontIfUp
+  new_form.Notify cbFirstMessage + 50, Trim$(Str$(the_type))
+  new_form.Notify cbFirstMessage + 51, the_text
+  new_form.Notify cbFirstMessage + 52, the_caption
+  While the_response < 0
+    Sleep(250)
+  Wend
+  msg_box = the_response
+End Function
+
+Sub test()
+  Dim t_list As New List
+  Dim t_str  As String
+
+  t_str = get_sprintf(10001, "en_us", "", "f", "e", "d", "c", "b", "a")
+  msgbox t_str
+End Sub

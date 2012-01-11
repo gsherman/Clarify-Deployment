@@ -1,0 +1,109 @@
+<schemaScript xmlns="http://www.dovetailsoftware.com/2006/10/SchemaScript.xsd">
+
+  <!--
+  * Product        :  fcSDK
+  *
+  * Description    :  This schemaScript file provides information required to update 
+  *                   a Clarify schema for the fcSDK product.
+  *
+  * Usage          :  Use the Dovetail SchemaEditor to run this schemaScript.
+  *
+  * Author         :  Dovetail Software, Inc. (formerly First Choice Software)
+  *                   8900 Business Park Drive
+  *                   Austin, TX  78759
+  *                   (512) 418-2905
+  *                   www.dovetailsoftware.com
+  *
+  * Copyright (C)  2006 Dovetail Software, Inc.
+  * All Rights Reserved
+  -->
+
+  <addViewColumn name="work_group" column="work_group" table="employee" view="empl_user" ></addViewColumn>
+  <addViewColumn name="site_status" column="status" table="site" view="rol_contct" ></addViewColumn>
+
+
+  <addTable name="fc_licensing" id="4701">
+    <description>First Choice Software licensing</description>
+    <groupName>FC System</groupName>
+  </addTable>
+
+  <addColumn name="objid" dataType="Integer" table="fc_licensing" >
+    <description>Internal record number</description>
+    <clarifyGenericFieldID>3</clarifyGenericFieldID>
+  </addColumn>
+  <addColumn name="dev" dataType="Integer" table="fc_licensing" >
+    <isNullable>true</isNullable>
+    <description>Row version number for mobile distribution purposes</description>
+    <clarifyGenericFieldID>151</clarifyGenericFieldID>
+  </addColumn>
+  <addColumn name="licenseKey" dataType="String" table="fc_licensing" >
+    <length>255</length>
+    <description>null</description>
+  </addColumn>
+
+
+
+  <addTable name="fc_licensegrace" id="4702">
+    <description>First Choice Software Licensing</description>
+    <groupName>FC System</groupName>
+  </addTable>
+
+  <addColumn name="objid" dataType="Integer" table="fc_licensegrace" >
+    <description>Internal record number</description>
+    <clarifyGenericFieldID>3</clarifyGenericFieldID>
+  </addColumn>
+  <addColumn name="dev" dataType="Integer" table="fc_licensegrace" >
+    <isNullable>true</isNullable>
+    <description>Row version number for mobile distribution purposes</description>
+    <clarifyGenericFieldID>151</clarifyGenericFieldID>
+  </addColumn>
+  <addColumn name="eventDate" dataType="DateTime" table="fc_licensegrace" >
+    <description>null</description>
+  </addColumn>
+
+
+  <addRelation name="license2graceevent" type="OneToMany" table="fc_licensing" inverseRelationName="graceevent2license" inverseTable="fc_licensegrace" >
+  </addRelation>
+
+
+  <addTable name="fc_string" id="3500">
+    <description>Locale-based strings for First Choice Software Customizations</description>
+    <groupName>System</groupName>
+  </addTable>
+
+  <addColumn name="objid" dataType="Integer" table="fc_string" >
+    <description>Internal record number</description>
+    <clarifyGenericFieldID>3</clarifyGenericFieldID>
+  </addColumn>
+  <addColumn name="id" dataType="Integer" table="fc_string" >
+    <description>String ID</description>
+  </addColumn>
+  <addColumn name="name" dataType="String" table="fc_string" >
+    <length>255</length>
+    <description>String ID</description>
+  </addColumn>
+  <addColumn name="string" dataType="String" table="fc_string" >
+    <length>255</length>
+    <description>Name or key of this string</description>
+    </addColumn>
+  <addColumn name="locale" dataType="String" table="fc_string" >
+    <length>20</length>
+    <description>Indicates the locale of the string; e.g., EN_US=US English, JA_JP=Japanese in Japan</description>
+  </addColumn>
+  <addColumn name="application" dataType="String" table="fc_string" >
+    <length>80</length>
+    <description>null</description>
+  </addColumn>
+  <addColumn name="dev" dataType="Integer" table="fc_string" >
+    <isNullable>true</isNullable>
+    <description>Row version number for mobile distribution purposes</description>
+    <clarifyGenericFieldID>151</clarifyGenericFieldID>
+  </addColumn>
+  <addColumn name="nstring" dataType="String" table="fc_string" >
+    <length>255</length>
+    <description>Text of the string</description>
+  </addColumn>
+  
+
+
+</schemaScript> 
